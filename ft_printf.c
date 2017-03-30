@@ -6,7 +6,7 @@
 /*   By: egurfink <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/28 16:54:48 by egurfink          #+#    #+#             */
-/*   Updated: 2017/03/30 14:31:12 by egurfink         ###   ########.fr       */
+/*   Updated: 2017/03/30 14:36:23 by egurfink         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -768,7 +768,7 @@ int				foobar(const char *str, va_list v_lst, int *count)
 			i += find_precision(str + i, spec);
 	}
 	spec->type = str[i++];
-	//for_print(spec, v_lst, count);
+	for_print(spec, v_lst, count);
 	free(spec);
 	free(tmp);
 	return (i);
