@@ -6,7 +6,7 @@
 /*   By: egurfink <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/28 16:54:48 by egurfink          #+#    #+#             */
-/*   Updated: 2017/03/30 14:36:23 by egurfink         ###   ########.fr       */
+/*   Updated: 2017/03/25 16:16:18 by egurfink         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,12 @@ int 			countlen(int n)
 	}
 	return (len);
 }
+
+//void			free_struct(t_spec *spec, t_var *tmp)
+//{
+//	free(spec);
+//	free(tmp);
+//}
 
 unsigned int 	w_base(t_spec *a)
 {
@@ -288,27 +294,28 @@ void 			to_string(t_spec *a, va_list v_lst, int *count)
 
 	i = 0;
 	s = get_string(v_lst);
-	(a->precision != -1 && (size_t)a->precision < ft_strlen(s))
-	? (a->width -= a->precision) : (a->width -= ft_strlen(s));
-	if (a->flag[1] == 0 && a->flag[0] == 1)
+	if (s)
 	{
-		while (a->width-- > 0 && ++(*count))
-			write(1, "0", 1);
-	}
-	else
-	{
-		while (a->width-- > 0 && ++(*count))
-			write(1, " ", 1);
-	}
-	if (a->precision != -1 && (size_t)a->precision < ft_strlen(s))
-	{
-		while (i < a->precision && ++(*count))
-			ft_putchar(s[i++]);
-	}
-	else
-	{
-		while (s[i] && ++(*count))
-			ft_putchar(s[i++]);
+		(a->precision != -1 && (size_t) a->precision < ft_strlen(s))
+		? (a->width -= a->precision) : (a->width -= ft_strlen(s));
+		if (a->flag[1] == 0 && a->flag[0] == 1)
+		{
+			while (a->width-- > 0 && ++(*count))
+				write(1, "0", 1);
+		} else
+		{
+			while (a->width-- > 0 && ++(*count))
+				write(1, " ", 1);
+		}
+		if (a->precision != -1 && (size_t) a->precision < ft_strlen(s))
+		{
+			while (i < a->precision && ++(*count))
+				ft_putchar(s[i++]);
+		} else
+		{
+			while (s[i] && ++(*count))
+				ft_putchar(s[i++]);
+		}
 	}
 }
 
@@ -319,27 +326,28 @@ void			to_string_minus(t_spec *a, va_list v_lst, int *count)
 
 	i = 0;
 	s = get_string(v_lst);
-	(a->precision != -1 && (size_t)a->precision < ft_strlen(s))
-	? (a->width -= a->precision) : (a->width -= ft_strlen(s));
-	if (a->precision != -1 && (size_t)a->precision < ft_strlen(s))
+	if (s)
 	{
-		while (i < a->precision && ++(*count))
-			ft_putchar(s[i++]);
-	}
-	else
-	{
-		while (s[i] && ++(*count))
-			ft_putchar(s[i++]);
-	}
-	if (a->flag[1] == 0 && a->flag[0] == 1)
-	{
-		while (a->width-- > 0 && ++(*count))
-			write(1, "0", 1);
-	}
-	else
-	{
-		while (a->width-- > 0 && ++(*count))
-			write(1, " ", 1);
+		(a->precision != -1 && (size_t) a->precision < ft_strlen(s))
+		? (a->width -= a->precision) : (a->width -= ft_strlen(s));
+		if (a->precision != -1 && (size_t) a->precision < ft_strlen(s))
+		{
+			while (i < a->precision && ++(*count))
+				ft_putchar(s[i++]);
+		} else
+		{
+			while (s[i] && ++(*count))
+				ft_putchar(s[i++]);
+		}
+		if (a->flag[1] == 0 && a->flag[0] == 1)
+		{
+			while (a->width-- > 0 && ++(*count))
+				write(1, "0", 1);
+		} else
+		{
+			while (a->width-- > 0 && ++(*count))
+				write(1, " ", 1);
+		}
 	}
 }
 
@@ -479,9 +487,9 @@ void		to_hex(t_spec *a, va_list v_lst, int *count)
 	char 		*s;
 
 	x = get_hex(a->length, v_lst);
+	(a->flag[3]) ? a->width -= 2 : 0;
 	(x == 0 && a->precision == 0)
 	? (s = "") : (s = ft_itoa_base(x, w_base(a)));
-	(a->flag[3] && x != 0) ? a->width -= 2 : 0;
 	if (a->width < a->precision)
 		a->width = 0;
 	if (a->width >= a->precision && a->precision > countlen(x))
@@ -490,11 +498,11 @@ void		to_hex(t_spec *a, va_list v_lst, int *count)
 		a->width -= (ft_strlen(s));
 	(((size_t)a->precision > ft_strlen(s)) && (a->precision != -1))
 	? (a->precision -= ft_strlen(s)) : (a->precision = 0);
-	(a->flag[3]) && (*count += 2) ? ft_putstr("0x") : 0;
 	while (!a->flag[0] && a->width-- > 0 && ++(*count))
 		ft_putchar(' ');
+	((a->flag[3]) && (x > 0) && (*count += 2)) ? (ft_putstr("0x")) : 0;
 	while (a->flag[0] && a->width-- > 0 && ++(*count))
-		ft_putchar('0');
+		ft_putchar(' ');
 	while (a->precision-- > 0 && ++(*count))
 		ft_putchar('0');
 	x = 0;
@@ -508,6 +516,7 @@ void		to_hex_minus(t_spec *a, va_list v_lst, int *count)
 	char 		*s;
 
 	x = get_hex(a->length, v_lst);
+	(a->flag[3]) ? a->width -= 2 : 0;
 	if (a->width < a->precision)
 		a->width = 0;
 	(x == 0 && a->precision == 0)
@@ -516,10 +525,10 @@ void		to_hex_minus(t_spec *a, va_list v_lst, int *count)
 		a->width -= a->precision;
 	else
 		a->width -= (ft_strlen(s));
+	((a->flag[3]) && (x > 0) && (*count += 2)) ? (ft_putstr("0x")) : 0;
 	(((size_t)a->precision > ft_strlen(s)) && (a->precision != -1))
 	? (a->precision -= ft_strlen(s)) : (a->precision = 0);
 	x = 0;
-	(a->flag[3] && x != 0) && (*count += 2) ? ft_putstr("0x") : 0;
 	while (a->precision-- > 0 && ++(*count))
 		ft_putchar('0');
 	while (s[x] && ++(*count))
@@ -545,11 +554,11 @@ void			to_hex_big(t_spec *a, va_list v_lst, int *count)
 		a->width -= (ft_strlen(s));
 	(((size_t)a->precision > ft_strlen(s)) && (a->precision != -1))
 	? (a->precision -= ft_strlen(s)) : (a->precision = 0);
-	(a->flag[3] && x != 0) && (*count += 2) ? ft_putstr("0X") : 0;
 	while (!a->flag[0] && a->width-- > 0 && ++(*count))
 		ft_putchar(' ');
+	((a->flag[3]) && (x > 0) && (*count += 2)) ? (ft_putstr("0X")) : 0;
 	while (a->flag[0] && a->width-- > 0 && ++(*count))
-		ft_putchar('0');
+		ft_putchar(' ');
 	while (a->precision-- > 0 && ++(*count))
 		ft_putchar('0');
 	x = 0;
@@ -563,6 +572,7 @@ void		to_hex_big_minus(t_spec *a, va_list v_lst, int *count)
 	char 		*s;
 
 	x = get_hex(a->length, v_lst);
+	(a->flag[3]) ? a->width -= 2 : 0;
 	if (a->width < a->precision)
 		a->width = 0;
 	(x == 0 && a->precision == 0)
@@ -571,72 +581,14 @@ void		to_hex_big_minus(t_spec *a, va_list v_lst, int *count)
 		a->width -= a->precision;
 	else
 		a->width -= (ft_strlen(s));
+	((a->flag[3]) && (x > 0) && (*count += 2)) ? (ft_putstr("0X")) : 0;
 	(((size_t)a->precision > ft_strlen(s)) && (a->precision != -1))
 	? (a->precision -= ft_strlen(s)) : (a->precision = 0);
 	x = 0;
-	(a->flag[3] && x != 0) && (*count += 2) ? ft_putstr("0X") : 0;
 	while (a->precision-- > 0 && ++(*count))
 		ft_putchar('0');
 	while (s[x] && ++(*count))
 		ft_putchar(s[x++]);
-	while (a->width-- > 0 && ++(*count))
-		ft_putchar(' ');
-}
-
-void		to_pointer(t_spec *a, va_list v_lst, int *count)
-{
-	intmax_t	p;
-	char 		*s;
-
-	p = get_hex(a->length, v_lst);
-	(p == 0 && a->precision == 0)
-	? (s = "") : (s = ft_itoa_base_u(p, w_base(a)));
-	if (a->width < a->precision)
-		a->width = 0;
-	if (a->width >= a->precision && a->precision > countlen(p))
-		a->width -= a->precision;
-	else
-		a->width -= (ft_strlen(s));
-	(((size_t)a->precision > ft_strlen(s)) && (a->precision != -1))
-	? (a->precision -= ft_strlen(s)) : (a->precision = 0);
-	ft_putstr("0x");
-	(*count) += 2;
-	a->width -= 2;
-	while (!a->flag[0] && a->width-- > 0 && ++(*count))
-		ft_putchar(' ');
-	while (a->flag[0] && a->width-- > 0 && ++(*count))
-		ft_putchar('0');
-	while (a->precision-- > 0 && ++(*count))
-		ft_putchar('0');
-	p = 0;
-	while (s[p] && ++(*count))
-		ft_putchar((char)ft_tolower((s[p++])));
-}
-
-void			to_pointer_minus(t_spec *a, va_list v_lst, int *count)
-{
-	intmax_t	x;
-	char 		*s;
-
-	x = get_hex(a->length, v_lst);
-	if (a->width < a->precision)
-		a->width = 0;
-	(x == 0 && a->precision == 0)
-	? (s = "") : (s = ft_itoa_base_u(x, w_base(a)));
-	if (a->width >= a->precision && a->precision > countlen(x))
-		a->width -= a->precision;
-	else
-		a->width -= (ft_strlen(s));
-	(((size_t)a->precision > ft_strlen(s)) && (a->precision != -1))
-	? (a->precision -= ft_strlen(s)) : (a->precision = 0);
-	x = 0;
-	ft_putstr("0x");
-	while (a->precision-- > 0 && ++(*count))
-		ft_putchar('0');
-	(*count) += 2;
-	a->width -= 2;
-	while (s[x] && ++(*count))
-		ft_putchar((char)ft_tolower(s[x++]));
 	while (a->width-- > 0 && ++(*count))
 		ft_putchar(' ');
 }
@@ -691,6 +643,64 @@ void			to_octal_minus(t_spec *a, va_list v_lst, int *count)
 	(a->flag[3]) && ++(*count) ? ft_putchar('0') : 0;
 	while (s[o] && ++(*count))
 		ft_putchar(s[o++]);
+	while (a->width-- > 0 && ++(*count))
+		ft_putchar(' ');
+}
+
+void		to_pointer(t_spec *a, va_list v_lst, int *count)
+{
+	intmax_t	p;
+	char 		*s;
+
+	p = get_hex(a->length, v_lst);
+	(p == 0 && a->precision == 0)
+	? (s = "") : (s = ft_itoa_base_u(p, w_base(a)));
+	if (a->width < a->precision)
+		a->width = 0;
+	if (a->width >= a->precision && a->precision > countlen(p))
+		a->width -= a->precision;
+	else
+		a->width -= (ft_strlen(s));
+	(((size_t)a->precision > ft_strlen(s)) && (a->precision != -1))
+	? (a->precision -= ft_strlen(s)) : (a->precision = 0);
+	(*count) += 2;
+	a->width -= 2;
+	while (!a->flag[0] && a->width-- > 0 && ++(*count))
+		ft_putchar(' ');
+	while (a->flag[0] && a->width-- > 0 && ++(*count))
+		ft_putchar('0');
+	ft_putstr("0x");
+	while (a->precision-- > 0 && ++(*count))
+		ft_putchar('0');
+	p = 0;
+	while (s[p] && ++(*count))
+		ft_putchar((char)ft_tolower((s[p++])));
+}
+
+void			to_pointer_minus(t_spec *a, va_list v_lst, int *count)
+{
+	intmax_t	x;
+	char 		*s;
+
+	x = get_hex(a->length, v_lst);
+	if (a->width < a->precision)
+		a->width = 0;
+	(x == 0 && a->precision == 0)
+	? (s = "") : (s = ft_itoa_base_u(x, w_base(a)));
+	if (a->width >= a->precision && a->precision > countlen(x))
+		a->width -= a->precision;
+	else
+		a->width -= (ft_strlen(s));
+	(((size_t)a->precision > ft_strlen(s)) && (a->precision != -1))
+	? (a->precision -= ft_strlen(s)) : (a->precision = 0);
+	x = 0;
+	ft_putstr("0x");
+	while (a->precision-- > 0 && ++(*count))
+		ft_putchar('0');
+	(*count) += 2;
+	a->width -= 2;
+	while (s[x] && ++(*count))
+		ft_putchar((char)ft_tolower(s[x++]));
 	while (a->width-- > 0 && ++(*count))
 		ft_putchar(' ');
 }
@@ -776,9 +786,9 @@ int				foobar(const char *str, va_list v_lst, int *count)
 
 int				ft_printf(const char *str, ...)
 {
-	va_list	ag;
-	int		count;
-	int		i;
+	va_list		ag;
+	int			count;
+	int			i;
 
 	va_start(ag, str);
 	i = 0;
