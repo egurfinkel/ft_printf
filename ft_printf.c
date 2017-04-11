@@ -327,6 +327,11 @@ void 			to_string(t_spec *a, va_list v_lst, int *count)
 	}
 }
 
+void			to_string_big(t_spec *a, va_list v_lst, int *count)
+{
+	to_string(a, v_lst, count);
+}
+
 void			to_string_minus(t_spec *a, va_list v_lst, int *count)
 {
 	char 	*s;
@@ -358,6 +363,11 @@ void			to_string_minus(t_spec *a, va_list v_lst, int *count)
 				write(1, " ", 1);
 		}
 	}
+}
+
+void			to_string_minus_big(t_spec *a, va_list v_lst, int *count)
+{
+	to_string_minus(a, v_lst, count);
 }
 
 void			to_int(t_spec *a, va_list v_lst, int *count)
@@ -751,9 +761,17 @@ void			for_print(t_spec *spc, va_list v_lst, int *count)
 	}
 	else if (spc->type == 's' || spc->type == 'S')
 	{
-		spc->flag[1]
-		? (to_string_minus(spc, v_lst, count))
-		: (to_string(spc, v_lst, count));
+		if (spc->type == 'S')
+		{
+			spc->flag[1]
+			? (to_string_minus_big(spc, v_lst, count))
+			: (to_string_big(spc, v_lst, count));
+		} else
+		{
+			spc->flag[1]
+			? (to_string_minus(spc, v_lst, count))
+			: (to_string(spc, v_lst, count));
+		}
 	}
 	else if (spc->type == 'p')
 	{
