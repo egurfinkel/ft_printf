@@ -148,7 +148,7 @@ int				find_length(const char *s, t_spec *a)
 	i = 0;
 	if (a->h == 0 && a->l == 0)
 	{
-		while (s[i])
+		while (s[i] && s[i] != '%')
 		{
 			(s[i] == 'h') ? a->h++ : 0;
 			(s[i] == 'l') ? a->l++ : 0;
@@ -616,11 +616,12 @@ void			to_octal(t_spec *a, va_list v_lst, int *count)
 	char 		*s;
 
 	o = get_octal(a->length, v_lst);
-	(o == 0 && a->precision == 0)
-	? (s = "") : (s = ft_itoa_base_u(o, w_base(a)));
-	(a->flag[3]) ? a->width-- : 0;
+	(o > 0 && a->flag[3] && a->precision--) ? (a->width--) : 0;
 	if (a->width < a->precision)
 		a->width = 0;
+	(o == 0 && a->precision == 0)
+	? s = "" : (s = ft_itoa_base_u(o, w_base(a)));
+	(o == 0 && a->flag[3]) ? s = "0" : 0;
 	if (a->width >= a->precision && a->precision > countlen(o))
 		a->width -= a->precision;
 	else
@@ -633,9 +634,9 @@ void			to_octal(t_spec *a, va_list v_lst, int *count)
 		ft_putchar('0');
 	while (a->precision-- > 0 && ++(*count))
 		ft_putchar('0');
+	(o > 0 && a->flag[3] && ++(*count)) ? ft_putchar('0') : 0;
 	o = 0;
-	(a->flag[3] && ++(*count)) ? ft_putchar('0') : 0;
- 	while (s[o] && ++(*count))
+	while (s[o] && ++(*count))
 		ft_putchar(s[o++]);
 }
 
@@ -649,6 +650,7 @@ void			to_octal_minus(t_spec *a, va_list v_lst, int *count)
 		a->width = 0;
 	(o == 0 && a->precision == 0)
 	? (s = "") : (s = ft_itoa_base_u(o, w_base(a)));
+	(o == 0 && a->flag[3] && ++(*count)) ? s = "0" : 0;
 	(a->flag[3]) ? a->width-- : 0;
 	if (a->width >= a->precision && a->precision > countlen(o))
 		a->width -= a->precision;
@@ -656,10 +658,10 @@ void			to_octal_minus(t_spec *a, va_list v_lst, int *count)
 		a->width -= (ft_strlen(s));
 	(((size_t)a->precision > ft_strlen(s)) && (a->precision != -1))
 	? (a->precision -= ft_strlen(s)) : (a->precision = 0);
+	(o > 0 && a->flag[3] && ++(*count)) ? ft_putchar('0') : 0;
 	o = 0;
 	while (a->precision-- > 0 && ++(*count))
 		ft_putchar('0');
-	(a->flag[3]) && ++(*count) ? ft_putchar('0') : 0;
 	while (s[o] && ++(*count))
 		ft_putchar(s[o++]);
 	while (a->width-- > 0 && ++(*count))
@@ -733,6 +735,11 @@ void			for_print(t_spec *spc, va_list v_lst, int *count)
 {
 	if (spc->type == 'd' || spc->type == 'D' || spc->type == 'i')
 	{
+		if (spc->type == 'D')
+		{
+			spc->type = 'd';
+			spc->length = 3;
+		}
 		spc->flag[1]
 		? to_int_minus(spc, v_lst, count)
 		: to_int(spc, v_lst, count);
@@ -749,8 +756,13 @@ void			for_print(t_spec *spc, va_list v_lst, int *count)
 		? to_pointer_minus(spc, v_lst, count)
 		: to_pointer(spc, v_lst, count);
 	}
-	else if (spc->type == 'o')
+	else if (spc->type == 'o' || spc->type == 'O')
 	{
+		if (spc->type == 'O')
+		{
+			spc->type = 'o';
+			spc->length = 3;
+		}
 		spc->flag[1]
 		? to_octal_minus(spc, v_lst, count)
 		: to_octal(spc, v_lst, count);
