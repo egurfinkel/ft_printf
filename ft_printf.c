@@ -217,7 +217,7 @@ uintmax_t		get_uint(int len, va_list v_lst)
 	else if (len == 6)
 		return (va_arg(v_lst, uintmax_t));
 	else
-		return (va_arg(v_lst, unsigned int));
+		return (va_arg(v_lst, unsigned long));
 }
 
 uintmax_t		get_octal(int len, va_list v_lst)
@@ -420,7 +420,7 @@ void			to_int(t_spec *a, va_list v_lst, int *count)
 		ft_putchar(s[i++]);
 }
 
-void		to_int_minus(t_spec *a, va_list v_lst, int *count)
+void			to_int_minus(t_spec *a, va_list v_lst, int *count)
 {
 	intmax_t	i;
 	char		*s;
@@ -688,7 +688,7 @@ void		to_pointer(t_spec *a, va_list v_lst, int *count)
 	intmax_t	p;
 	char 		*s;
 
-	p = get_hex(a->length, v_lst);
+	p = va_arg(v_lst, unsigned long);
 	(p == 0 && a->precision == 0)
 	? (s = "") : (s = ft_itoa_base_u(p, w_base(a)));
 	if (a->width < a->precision)
@@ -715,28 +715,28 @@ void		to_pointer(t_spec *a, va_list v_lst, int *count)
 
 void			to_pointer_minus(t_spec *a, va_list v_lst, int *count)
 {
-	intmax_t	x;
+	intmax_t	p;
 	char 		*s;
 
-	x = get_hex(a->length, v_lst);
+	p = va_arg(v_lst, unsigned long);
 	if (a->width < a->precision)
 		a->width = 0;
-	(x == 0 && a->precision == 0)
-	? (s = "") : (s = ft_itoa_base_u(x, w_base(a)));
-	if (a->width >= a->precision && a->precision > countlen(x))
+	(p == 0 && a->precision == 0)
+	? (s = "") : (s = ft_itoa_base_u(p, w_base(a)));
+	if (a->width >= a->precision && a->precision > countlen(p))
 		a->width -= a->precision;
 	else
 		a->width -= (ft_strlen(s));
 	(((size_t)a->precision > ft_strlen(s)) && (a->precision != -1))
 	? (a->precision -= ft_strlen(s)) : (a->precision = 0);
-	x = 0;
+	p = 0;
 	ft_putstr("0x");
 	while (a->precision-- > 0 && ++(*count))
 		ft_putchar('0');
 	(*count) += 2;
 	a->width -= 2;
-	while (s[x] && ++(*count))
-		ft_putchar((char)ft_tolower(s[x++]));
+	while (s[p] && ++(*count))
+		ft_putchar((char)ft_tolower(s[p++]));
 	while (a->width-- > 0 && ++(*count))
 		ft_putchar(' ');
 }
@@ -855,7 +855,7 @@ int				foobar(const char *str, va_list v_lst, int *count)
 	if (spec->type == '\0')
 		return (i - 1);
 	for_print(spec, v_lst, count);
-	free_struct(&spec, &tmp);
+//	free_struct(&spec, &tmp);
 	return (i);
 }
 
