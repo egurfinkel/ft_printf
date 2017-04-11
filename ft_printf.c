@@ -290,6 +290,11 @@ void			to_char(t_spec *a, va_list v_lst, int *count, int flag)
 	}
 }
 
+void			to_char_big(t_spec *a, va_list v_lst, int *count, int flag)
+{
+	to_char(a, v_lst, count, flag);
+}
+
 void 			to_string(t_spec *a, va_list v_lst, int *count)
 {
 	char 	*s;
@@ -779,20 +784,28 @@ void			for_print(t_spec *spc, va_list v_lst, int *count)
 		? to_uint(spc, v_lst, count)
 		: to_uint_minus(spc, v_lst, count);
 	}
-	else if (spc->type == 'x')
+	else if (spc->type == 'x' || spc->type == 'X')
 	{
-		spc->flag[1]
-		? to_hex_minus(spc, v_lst, count)
-		: to_hex(spc, v_lst, count);
-	}
-	else if (spc->type == 'X')
-	{
-		spc->flag[1]
-		? to_hex_big_minus(spc, v_lst, count)
-		: to_hex_big(spc, v_lst, count);
+		if (spc->type == 'X')
+		{
+			spc->flag[1]
+			? to_hex_big_minus(spc, v_lst, count)
+			: to_hex_big(spc, v_lst, count);
+		}
+		else
+		{
+			spc->flag[1]
+			? to_hex_minus(spc, v_lst, count)
+			: to_hex(spc, v_lst, count);
+		}
 	}
 	else if (spc->type == 'c' || spc->type == 'C')
-		to_char(spc, v_lst, count, 1);
+	{
+		if (spc->type == 'C')
+			to_char_big(spc, v_lst, count, 1);
+		else
+			to_char(spc, v_lst, count, 1);
+	}
 	else
 		to_percent(spc, v_lst, count);
 }
