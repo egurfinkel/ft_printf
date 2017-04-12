@@ -19,25 +19,26 @@
 
 typedef struct 	s_spec
 {
-	int			precision;
-	int			flag[5]; // '0' == 0, '-' == 1, '+' == 2, '#' == 3, ' ' == 4
-	int			width;
-	int			length; // 1 == 'hh', 2 == 'h', 3 == 'l', 4 == 'll', 5 == 'z', 6 == 'j'
+	int			prc;
+	int			f[5]; // '0' == 0, '-' == 1, '+' == 2, '#' == 3, ' ' == 4
+	int			wd;
+	int			ln; // 1 == 'hh', 2 == 'h', 3 == 'l', 4 == 'll', 5 == 'z', 6 == 'j'
 	char		type;
 	int 		h;
 	int 		l;
+	int 		wand;
 }				t_spec;
 
 typedef struct 	tmp_var
 {
-	int 		flag;
-	int 		width;
-	int 		precision;
-	int 		length;
+	int 		f;
+	int 		w;
+	int 		p;
+	int 		l;
 }				t_var;
 
 int				ft_printf(const char *str, ...);
-int				foobar(const char *str, va_list v_lst, int *count);
+int				ft_magic(const char *str, va_list v_lst, int *count);
 void			struct_init(t_spec **str);
 void			tmp_struct_init(t_var **str);
 int				countlen(intmax_t n);
@@ -54,10 +55,13 @@ void			to_hex_minus(t_spec *a, va_list v_lst, int *count);
 void			to_hex_big(t_spec *a, va_list v_lst, int *count);
 void			to_hex_big_minus(t_spec *a, va_list v_lst, int *count);
 void			to_char(t_spec *a, va_list v_lst, int *count, int flag);
+void			to_char_big(t_spec *a, va_list v_lst, int *count, int flag);
 void			to_int(t_spec *a, va_list v_lst, int *count);
 void			to_int_minus(t_spec *a, va_list v_lst, int *count);
 void			to_string(t_spec *a, va_list v_lst, int *count);
 void			to_string_minus(t_spec *a, va_list v_lst, int *count);
+void			to_string_big(t_spec *a, va_list v_lst, int *count);
+void			to_string_minus_big(t_spec *a, va_list v_lst, int *count);
 void			to_pointer(t_spec *a, va_list v_lst, int *count);
 void			to_pointer_minus(t_spec *a, va_list v_lst, int *count);
 void			to_octal(t_spec *a, va_list v_lst, int *count);
@@ -75,6 +79,13 @@ char			*ft_itoa_base(intmax_t value, int base);
 void			uf(uintmax_t value, unsigned int base, char *str, int *i);
 char			*ft_itoa_base_u(uintmax_t value, unsigned int base);
 unsigned int	w_base(t_spec *a);
-//void			free_struct(t_spec *spec, t_var *tmp);
+void			free_struct(t_spec **spec, t_var **tmp);
+void			call_str(t_spec *spc, va_list v_lst, int *count);
+void			call_int(t_spec *spc, va_list v_lst, int *count);
+void			call_pointer(t_spec *spc, va_list v_lst, int *count);
+void			call_octal(t_spec *spc, va_list v_lst, int *count);
+void			call_uint(t_spec *spc, va_list v_lst, int *count);
+void			call_hex(t_spec *spc, va_list v_lst, int *count);
+void			call_char(t_spec *spc, va_list v_lst, int *count);
 
 #endif

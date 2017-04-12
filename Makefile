@@ -6,7 +6,7 @@
 #    By: egurfink <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/03/25 15:36:41 by egurfink          #+#    #+#              #
-#    Updated: 2017/03/31 18:39:32 by egurfink         ###   ########.fr        #
+#    Updated: 2017/03/31 21:18:44 by egurfink         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -138,7 +138,7 @@ OBJECTS = ft_printf.o \
 		  ft_itoa_base.o \
 		  get_next_line.o \
 
-all: re $(NAME)
+all: $(NAME)
 
 $(NAME):
 	gcc $(HEADER) -c $(SRC) -Wall -Wextra -Werror
