@@ -145,6 +145,8 @@ void			find_lh(const char *s, t_spec *a)
 	{
 		while (s[i] && s[i] != '%')
 		{
+			if ((a->h > 0 || a->l > 0) && s[i] == ' ')
+				a->f[4] = 1;
 			(s[i] == 'h') ? a->h++ : 0;
 			(s[i] == 'l') ? a->l++ : 0;
 			i++;
@@ -155,20 +157,20 @@ void			find_lh(const char *s, t_spec *a)
 int				find_length(const char *s, t_spec *a)
 {
 	find_lh(s, a);
-	if (ft_strncmp("z", s, 1) == 0 && a->ln < 5)
-		a->ln = 5;
-	else if (ft_strncmp("j", s, 1) == 0 && a->ln < 6)
-		a->ln = 6;
-	else if (a->h > 0 && a->ln < 2)
+	if (a->h > 0 && a->ln < 2)
 	{
-		a->ln = (a->h % 2 == 0) ? 1 : 2;
+		a->ln = ((a->h % 2 == 0) ? 1 : 2);
 		a->h = 0;
 	}
 	else if (a->l > 0 && a->ln < 4)
 	{
-		a->ln = (a->l % 2 == 0) ? 3 : 4;
+		a->ln = ((a->l % 2 == 0) ? 3 : 4);
 		a->l = 0;
 	}
+	else if (ft_strncmp("z", s, 1) == 0 && a->ln < 5)
+		a->ln = 5;
+	else if (ft_strncmp("j", s, 1) == 0 && a->ln < 6)
+		a->ln = 6;
 	if (a->ln == 1 || a->ln == 3)
 		return (2);
 	return (1);
