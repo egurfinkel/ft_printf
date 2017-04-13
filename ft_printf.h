@@ -53,6 +53,7 @@ void				tmp_struct_init(t_tmp **str);
 int					find_flag(const char *s, t_spc *a);
 int					find_width(const char *s, t_spc *a);
 int					find_precision(const char *s, t_spc *a);
+void				find_ln_magic(const char *s, t_spc *a);
 int					find_length(const char *s, t_spc *a);
 char				get_char(va_list v_lst);
 char				*get_string(va_list v_lst);
