@@ -397,8 +397,11 @@ void			to_string_minus_big(t_spec *a, va_list v_lst, int *count)
 }
 
 void
-int_magic(t_spec *a, int *count, intmax_t i, const char *s, int neg)
+int_magic(t_spec *a, int *count, intmax_t i, const char *s)
 {
+	int 	neg;
+
+	(i < 0) ? (neg = 1) : (neg = 0);
 	if (a->wd >= a->prc && a->prc > countlen(i))
 		a->wd -= a->prc;
 	else
@@ -432,7 +435,7 @@ void			to_int(t_spec *a, va_list v_lst, int *count)
 	(i == 0 && a->prc == 0) ? (s = "") : (s = ft_itoa_base(i, 10));
 	!ft_strcmp(s, "-9223372036854775808") ? (a->wand = 1) : (a->wand = 0);
 	(a->wd < a->prc) ? a->wd = 0 : 0;
-	int_magic(a, count, i, s, neg);
+	int_magic(a, count, i, s);
 	while (a->wd-- > 0 && ++(*count))
 		ft_putchar(' ');
 	(a->f[2] == 1 && !neg && !a->f[0] && ++(*count)) ? ft_putchar('+') : 0;
