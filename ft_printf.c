@@ -396,7 +396,8 @@ void			to_string_minus_big(t_spec *a, va_list v_lst, int *count)
 	to_string_minus(a, v_lst, count);
 }
 
-void			int_magic(t_spec *a, int *count, intmax_t i, const char *s, int neg)
+void
+int_magic(t_spec *a, int *count, intmax_t i, const char *s, int neg)
 {
 	if (a->wd >= a->prc && a->prc > countlen(i))
 		a->wd -= a->prc;

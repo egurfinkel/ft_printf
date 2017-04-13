@@ -16,13 +16,16 @@
 # include <unistd.h>
 # include <stdio.h>
 # include "libft.h"
-
+/*
+**  flag : |'0' -  0| |'-' -  1| |'+' -  2| |'#' -  3| |' ' -  4|
+**length : |'hh' - 1| |'h' - 2|| |'l' - 3|| |'ll' - 4| |'z' - 5|| |'j' - 6|
+*/
 typedef struct 	s_spec
 {
 	int			prc;
-	int			f[5]; // '0' == 0, '-' == 1, '+' == 2, '#' == 3, ' ' == 4
+	int			f[5];
 	int			wd;
-	int			ln; // 1 == 'hh', 2 == 'h', 3 == 'l', 4 == 'll', 5 == 'z', 6 == 'j'
+	int			ln;
 	char		type;
 	int 		h;
 	int 		l;
