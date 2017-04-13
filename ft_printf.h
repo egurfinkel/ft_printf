@@ -53,7 +53,6 @@ void				tmp_struct_init(t_tmp **str);
 int					find_flag(const char *s, t_spc *a);
 int					find_width(const char *s, t_spc *a);
 int					find_precision(const char *s, t_spc *a);
-void				find_lh(const char *s, t_spc *a);
 int					find_length(const char *s, t_spc *a);
 char				get_char(va_list v_lst);
 char				*get_string(va_list v_lst);
@@ -100,9 +99,7 @@ void				init_struct(t_tmp **tmp, t_spc **spec);
 void				free_struct(t_spc **spec, t_tmp **tmp);
 int					ft_magic(const char *str, va_list v_lst, int *count);
 int					ft_printf(const char *str, ...);
-void				f(intmax_t value, int base, char *str, int *i);
 char				*ft_itoa_base(intmax_t value, int base);
-void				uf(uintmax_t value, unsigned int base, char *str, int *i);
 char				*ft_itoa_base_u(uintmax_t value, unsigned int base);
 
 #endif
