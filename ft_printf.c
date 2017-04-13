@@ -12,7 +12,7 @@
 
 #include "ft_printf.h"
 
-int 			countlen(intmax_t n)
+int 			ft_countnum(intmax_t n)
 {
 	int len;
 
@@ -25,7 +25,7 @@ int 			countlen(intmax_t n)
 	return (len);
 }
 
-unsigned int 	w_base(t_spec *a)
+unsigned int 	w_base(t_spc *a)
 {
 	if (a->type == 'o' || a->type == 'O')
 		return (8);
@@ -73,9 +73,9 @@ int 			if_flag(const char ch)
 	return (0);
 }
 
-void			struct_init(t_spec **str)
+void			struct_init(t_spc **str)
 {
-	(*str) = (t_spec*)malloc(sizeof(t_spec));
+	(*str) = (t_spc*)malloc(sizeof(t_spc));
 	(*str)->wd = -1;
 	(*str)->prc = -1;
 	(*str)->f[0] = 0;
@@ -88,18 +88,19 @@ void			struct_init(t_spec **str)
 	(*str)->h = 0;
 	(*str)->l = 0;
 	(*str)->wand = 0;
+	(*str)->neg = 0;
 }
 
-void			tmp_struct_init(t_var **str)
+void			tmp_struct_init(t_tmp **str)
 {
-	(*str) = (t_var*)malloc(sizeof(t_var));
+	(*str) = (t_tmp*)malloc(sizeof(t_tmp));
 	(*str)->w = 0;
 	(*str)->p = 0;
 	(*str)->f = 0;
 	(*str)->l = 0;
 }
 
-int 			find_flag(const char *s, t_spec *a)
+int 			find_flag(const char *s, t_spc *a)
 {
 	if (*s == '0')
 		a->f[0] = 1;
@@ -114,13 +115,13 @@ int 			find_flag(const char *s, t_spec *a)
 	return (1);
 }
 
-int				find_width(const char *s, t_spec *a)
+int				find_width(const char *s, t_spc *a)
 {
 	a->wd = ft_atoi(s);
-	return (countlen(a->wd));
+	return (ft_countnum(a->wd));
 }
 
-int				find_precision(const char *s, t_spec *a)
+int				find_precision(const char *s, t_spc *a)
 {
 	int 		prec;
 
@@ -129,14 +130,14 @@ int				find_precision(const char *s, t_spec *a)
 	if (*s != '-' && *s != '+')
 	{
 		a->prc = ft_atoi((char*)s);
-		prec += countlen(a->prc);
+		prec += ft_countnum(a->prc);
 		if (*s == '0')
 			prec++;
 	}
 	return (prec);
 }
 
-void			find_lh(const char *s, t_spec *a)
+void			find_lh(const char *s, t_spc *a)
 {
 	int			i;
 
@@ -145,8 +146,6 @@ void			find_lh(const char *s, t_spec *a)
 	{
 		while (s[i] && s[i] != '%')
 		{
-			if ((a->h > 0 || a->l > 0) && s[i] == ' ')
-				a->f[4] = 1;
 			(s[i] == 'h') ? a->h++ : 0;
 			(s[i] == 'l') ? a->l++ : 0;
 			i++;
@@ -154,7 +153,7 @@ void			find_lh(const char *s, t_spec *a)
 	}
 }
 
-int				find_length(const char *s, t_spec *a)
+int				find_length(const char *s, t_spc *a)
 {
 	find_lh(s, a);
 	if (a->h > 0 && a->ln < 2)
@@ -258,7 +257,7 @@ uintmax_t 		get_hex(int len, va_list v_lst)
 		return (va_arg(v_lst, unsigned int));
 }
 
-char			set_symb(const t_spec *a)
+char			set_symb(const t_spc *a)
 {
 	char symb;
 
@@ -275,7 +274,7 @@ void			else_char(int *count, char *ch)
 		(*count)++;
 	}
 
-void			to_char(t_spec *a, va_list v_lst, int *count, int flag)
+void			to_char(t_spc *a, va_list v_lst, int *count, int flag)
 {
 	char		ch;
 	char		symb;
@@ -303,12 +302,12 @@ void			to_char(t_spec *a, va_list v_lst, int *count, int flag)
 		else_char(count, &ch);
 }
 
-void			to_char_big(t_spec *a, va_list v_lst, int *count, int flag)
+void			to_char_big(t_spc *a, va_list v_lst, int *count, int flag)
 {
 	to_char(a, v_lst, count, flag);
 }
 
-void			string_magic(t_spec *a, int *count, const char *s, int i)
+void			string_magic(t_spc *a, int *count, const char *s, int i)
 {
 	if (s)
 	{
@@ -333,7 +332,7 @@ void			string_magic(t_spec *a, int *count, const char *s, int i)
 	}
 }
 
-void 			to_string(t_spec *a, va_list v_lst, int *count)
+void 			to_string(t_spc *a, va_list v_lst, int *count)
 {
 	char 	*s;
 	int 	i;
@@ -346,12 +345,12 @@ void 			to_string(t_spec *a, va_list v_lst, int *count)
 	string_magic(a, count, s, i);
 }
 
-void			to_string_big(t_spec *a, va_list v_lst, int *count)
+void			to_string_big(t_spc *a, va_list v_lst, int *count)
 {
 	to_string(a, v_lst, count);
 }
 
-void			string_minus_magic(t_spec *a, int *count, const char *s, int i)
+void			string_minus_magic(t_spc *a, int *count, const char *s, int i)
 {
 	if (s)
 	{
@@ -380,7 +379,7 @@ void			string_minus_magic(t_spec *a, int *count, const char *s, int i)
 	}
 }
 
-void			to_string_minus(t_spec *a, va_list v_lst, int *count)
+void			to_string_minus(t_spc *a, va_list v_lst, int *count)
 {
 	char 	*s;
 	int 	i;
@@ -391,56 +390,52 @@ void			to_string_minus(t_spec *a, va_list v_lst, int *count)
 	string_minus_magic(a, count, s, i);
 }
 
-void			to_string_minus_big(t_spec *a, va_list v_lst, int *count)
+void			to_string_minus_big(t_spc *a, va_list v_lst, int *count)
 {
 	to_string_minus(a, v_lst, count);
 }
 
 void
-int_magic(t_spec *a, int *count, intmax_t i, const char *s)
+int_magic(t_spc *a, int *count, intmax_t i, const char *s)
 {
-	int 	neg;
-
-	(i < 0) ? (neg = 1) : (neg = 0);
-	if (a->wd >= a->prc && a->prc > countlen(i))
+	if (a->wd >= a->prc && a->prc > ft_countnum(i))
 		a->wd -= a->prc;
 	else
 		a->wd -= (ft_strlen(s));
-	(!neg && a->f[2] == 1) ? (a->wd--) : 0;
+	(!a->neg && a->f[2] == 1) ? (a->wd--) : 0;
 	(((size_t)a->prc > ft_strlen(s)) && (a->prc != -1))
 	? (a->prc -= ft_strlen(s)) : (a->prc = 0);
-	(a->f[4] == 1 && a->f[2] != 1 && !neg && ++(*count)) ? ft_putchar(' ') : 0;
+	(a->f[4] == 1 && a->f[2] != 1 && !a->neg && ++(*count)) ? ft_putchar(' ') : 0;
 	if (a->prc <= 0 && a->f[0])
 	{
-		if (a->f[2] == 1 && !neg && ++(*count))
+		if (a->f[2] == 1 && !a->neg && ++(*count))
 			ft_putchar('+');
-		else if (neg && a->wand++ == 0 && ++(*count))
+		else if (a->neg && a->wand++ == 0 && ++(*count))
 			ft_putchar('-');
 		while (a->wd-- > 0 && ++(*count))
 			ft_putchar('0');
 	}
 }
 
-void			to_int(t_spec *a, va_list v_lst, int *count)
+void			to_int(t_spc *a, va_list v_lst, int *count)
 {
 	intmax_t	i;
 	char		*s;
-	int 		neg;
 
 	i = get_int(a->ln, v_lst);
-	(i < 0) ? (neg = 1) : (neg = 0);
-	neg ? (i *= -1) : 0;
-	(a->prc <= countlen(i) && a->prc != -1) ? a->f[0] = 0 : 0;
-	(neg || (a->f[4] && !a->f[2])) ? (a->wd--) : 0;
+	(i < 0) ? (a->neg = 1) : (a->neg = 0);
+	a->neg ? (i *= -1) : 0;
+	(a->prc <= ft_countnum(i) && a->prc != -1) ? a->f[0] = 0 : 0;
+	(a->neg || (a->f[4] && !a->f[2])) ? (a->wd--) : 0;
 	(i == 0 && a->prc == 0) ? (s = "") : (s = ft_itoa_base(i, 10));
 	!ft_strcmp(s, "-9223372036854775808") ? (a->wand = 1) : (a->wand = 0);
 	(a->wd < a->prc) ? a->wd = 0 : 0;
 	int_magic(a, count, i, s);
 	while (a->wd-- > 0 && ++(*count))
 		ft_putchar(' ');
-	(a->f[2] == 1 && !neg && !a->f[0] && ++(*count)) ? ft_putchar('+') : 0;
-	(neg && !a->f[0] && a->wand++ == 0 && ++(*count)) ? ft_putchar('-') : 0;
-	(neg && !a->wand && ++(*count)) ? ft_putchar('-') : 0;
+	(a->f[2] == 1 && !a->neg && !a->f[0] && ++(*count)) ? ft_putchar('+') : 0;
+	(a->neg && !a->f[0] && a->wand++ == 0 && ++(*count)) ? ft_putchar('-') : 0;
+	(a->neg && !a->wand && ++(*count)) ? ft_putchar('-') : 0;
 	while (a->prc-- > 0 && ++(*count))
 		ft_putchar('0');
 	i = 0;
@@ -448,15 +443,15 @@ void			to_int(t_spec *a, va_list v_lst, int *count)
 		ft_putchar(s[i++]);
 }
 
-void			int_minus_magic(t_spec *a, intmax_t i, const char *s)
+void			int_minus_magic(t_spc *a, intmax_t i, const char *s)
 {
-	if (a->wd >= a->prc && a->prc > countlen(i))
+	if (a->wd >= a->prc && a->prc > ft_countnum(i))
 		a->wd -= a->prc;
 	else
 		a->wd -= ft_strlen(s);
 }
 
-void			to_int_minus(t_spec *a, va_list v_lst, int *count)
+void			to_int_minus(t_spc *a, va_list v_lst, int *count)
 {
 	intmax_t	i;
 	char		*s;
@@ -484,7 +479,7 @@ void			to_int_minus(t_spec *a, va_list v_lst, int *count)
 		ft_putchar(' ');
 }
 
-void			to_uint(t_spec *a, va_list v_lst, int *count)
+void			to_uint(t_spc *a, va_list v_lst, int *count)
 {
 	uintmax_t		ui;
 	char			*s;
@@ -496,7 +491,7 @@ void			to_uint(t_spec *a, va_list v_lst, int *count)
 	(a->f[0]) ? (symb = '0') : (symb = ' ');
 	if (a->wd < a->prc)
 		a->wd = 0;
-	if (a->wd >= a->prc && a->prc > countlen(ui))
+	if (a->wd >= a->prc && a->prc > ft_countnum(ui))
 		a->wd -= a->prc;
 	else
 		a->wd -= (ft_strlen(s));
@@ -511,7 +506,7 @@ void			to_uint(t_spec *a, va_list v_lst, int *count)
 		ft_putchar(s[ui++]);
 }
 
-void			to_uint_minus(t_spec *a, va_list v_lst, int *count)
+void			to_uint_minus(t_spc *a, va_list v_lst, int *count)
 {
 	uintmax_t	ui;
 	char		*s;
@@ -521,7 +516,7 @@ void			to_uint_minus(t_spec *a, va_list v_lst, int *count)
 		a->wd = 0;
 	(ui == 0 && a->prc == 0)
 	? (s = "") : (s = ft_itoa_base_u(ui, w_base(a)));
-	if (a->wd >= a->prc && a->prc > countlen(ui))
+	if (a->wd >= a->prc && a->prc > ft_countnum(ui))
 		a->wd -= a->prc;
 	else
 		a->wd -= ft_strlen(s);
@@ -536,7 +531,7 @@ void			to_uint_minus(t_spec *a, va_list v_lst, int *count)
 		ft_putchar(' ');
 }
 
-void			to_hex(t_spec *a, va_list v_lst, int *count)
+void			to_hex(t_spc *a, va_list v_lst, int *count)
 {
 	uintmax_t	x;
 	char 		*s;
@@ -547,7 +542,7 @@ void			to_hex(t_spec *a, va_list v_lst, int *count)
 	? (s = "") : (s = ft_itoa_base_u(x, w_base(a)));
 	if (a->wd < a->prc)
 		a->wd = 0;
-	if (a->wd >= a->prc && a->prc > countlen(x))
+	if (a->wd >= a->prc && a->prc > ft_countnum(x))
 		a->wd -= a->prc;
 	else
 		a->wd -= (ft_strlen(s));
@@ -565,7 +560,7 @@ void			to_hex(t_spec *a, va_list v_lst, int *count)
 		ft_putchar((char)ft_tolower((s[x++])));
 }
 
-void			to_hex_minus(t_spec *a, va_list v_lst, int *count)
+void			to_hex_minus(t_spc *a, va_list v_lst, int *count)
 {
 	uintmax_t	x;
 	char 		*s;
@@ -576,7 +571,7 @@ void			to_hex_minus(t_spec *a, va_list v_lst, int *count)
 		a->wd = 0;
 	(x == 0 && a->prc == 0)
 	? (s = "") : (s = ft_itoa_base_u(x, w_base(a)));
-	if (a->wd >= a->prc && a->prc > countlen(x))
+	if (a->wd >= a->prc && a->prc > ft_countnum(x))
 		a->wd -= a->prc;
 	else
 		a->wd -= (ft_strlen(s));
@@ -592,7 +587,7 @@ void			to_hex_minus(t_spec *a, va_list v_lst, int *count)
 		ft_putchar(' ');
 }
 
-void			to_hex_big(t_spec *a, va_list v_lst, int *count)
+void			to_hex_big(t_spc *a, va_list v_lst, int *count)
 {
 	uintmax_t	x;
 	char 		*s;
@@ -601,7 +596,7 @@ void			to_hex_big(t_spec *a, va_list v_lst, int *count)
 	(x == 0 && a->prc == 0) ? (s = "") : (s = ft_itoa_base_u(x, w_base(a)));
 	(a->f[3]) ? a->wd -= 2 : 0;
 	(a->wd < a->prc) ? a->wd = 0 : 0;
-	if (a->wd >= a->prc && a->prc > countlen(x))
+	if (a->wd >= a->prc && a->prc > ft_countnum(x))
 		a->wd -= a->prc;
 	else
 		a->wd -= (ft_strlen(s));
@@ -621,7 +616,7 @@ void			to_hex_big(t_spec *a, va_list v_lst, int *count)
 		ft_putchar(s[x++]);
 }
 
-void			to_hex_big_minus(t_spec *a, va_list v_lst, int *count)
+void			to_hex_big_minus(t_spc *a, va_list v_lst, int *count)
 {
 	uintmax_t	x;
 	char 		*s;
@@ -632,7 +627,7 @@ void			to_hex_big_minus(t_spec *a, va_list v_lst, int *count)
 		a->wd = 0;
 	(x == 0 && a->prc == 0)
 	? (s = "") : (s = ft_itoa_base_u(x, w_base(a)));
-	if (a->wd >= a->prc && a->prc > countlen(x))
+	if (a->wd >= a->prc && a->prc > ft_countnum(x))
 		a->wd -= a->prc;
 	else
 		a->wd -= (ft_strlen(s));
@@ -650,7 +645,7 @@ void			to_hex_big_minus(t_spec *a, va_list v_lst, int *count)
 		ft_putchar('0');
 }
 
-void			to_octal(t_spec *a, va_list v_lst, int *count)
+void			to_octal(t_spc *a, va_list v_lst, int *count)
 {
 	uintmax_t	o;
 	char 		*s;
@@ -662,7 +657,7 @@ void			to_octal(t_spec *a, va_list v_lst, int *count)
 	(o == 0 && a->prc == 0)
 	? s = "" : (s = ft_itoa_base_u(o, w_base(a)));
 	(o == 0 && a->f[3]) ? s = "0" : 0;
-	if (a->wd >= a->prc && a->prc > countlen(o))
+	if (a->wd >= a->prc && a->prc > ft_countnum(o))
 		a->wd -= a->prc;
 	else
 		a->wd -= (ft_strlen(s));
@@ -680,7 +675,7 @@ void			to_octal(t_spec *a, va_list v_lst, int *count)
 		ft_putchar(s[o++]);
 }
 
-void			to_octal_minus(t_spec *a, va_list v_lst, int *count)
+void			to_octal_minus(t_spc *a, va_list v_lst, int *count)
 {
 	uintmax_t	o;
 	char 		*s;
@@ -692,7 +687,7 @@ void			to_octal_minus(t_spec *a, va_list v_lst, int *count)
 	? (s = "") : (s = ft_itoa_base_u(o, w_base(a)));
 	(o == 0 && a->f[3] && ++(*count)) ? s = "0" : 0;
 	(a->f[3]) ? a->wd-- : 0;
-	if (a->wd >= a->prc && a->prc > countlen(o))
+	if (a->wd >= a->prc && a->prc > ft_countnum(o))
 		a->wd -= a->prc;
 	else
 		a->wd -= (ft_strlen(s));
@@ -708,7 +703,7 @@ void			to_octal_minus(t_spec *a, va_list v_lst, int *count)
 		ft_putchar(' ');
 }
 
-void			to_pointer(t_spec *a, va_list v_lst, int *count)
+void			to_pointer(t_spc *a, va_list v_lst, int *count)
 {
 	uintmax_t	p;
 	char 		*s;
@@ -717,7 +712,7 @@ void			to_pointer(t_spec *a, va_list v_lst, int *count)
 	(p == 0 && a->prc == 0)
 	? (s = "") : (s = ft_itoa_base_u(p, w_base(a)));
 	(a->wd < a->prc) ? a->wd = 0 : 0;
-	if (a->wd >= a->prc && a->prc > countlen(p))
+	if (a->wd >= a->prc && a->prc > ft_countnum(p))
 		a->wd -= a->prc;
 	else
 		a->wd -= (ft_strlen(s));
@@ -737,7 +732,7 @@ void			to_pointer(t_spec *a, va_list v_lst, int *count)
 		ft_putchar((char)ft_tolower((s[p++])));
 }
 
-void			to_pointer_minus(t_spec *a, va_list v_lst, int *count)
+void			to_pointer_minus(t_spc *a, va_list v_lst, int *count)
 {
 	uintmax_t	p;
 	char 		*s;
@@ -747,7 +742,7 @@ void			to_pointer_minus(t_spec *a, va_list v_lst, int *count)
 		a->wd = 0;
 	(p == 0 && a->prc == 0)
 	? (s = "") : (s = ft_itoa_base_u(p, w_base(a)));
-	if (a->wd >= a->prc && a->prc > countlen(p))
+	if (a->wd >= a->prc && a->prc > ft_countnum(p))
 		a->wd -= a->prc;
 	else
 		a->wd -= (ft_strlen(s));
@@ -765,12 +760,12 @@ void			to_pointer_minus(t_spec *a, va_list v_lst, int *count)
 		ft_putchar(' ');
 }
 
-void			to_percent(t_spec *a, va_list v_lst, int *count)
+void			to_percent(t_spc *a, va_list v_lst, int *count)
 {
 	to_char(a, v_lst, count, 0);
 }
 
-void			call_str(t_spec *spc, va_list v_lst, int *count)
+void			call_str(t_spc *spc, va_list v_lst, int *count)
 {
 	if (spc->type == 'S')
 	{
@@ -786,7 +781,7 @@ void			call_str(t_spec *spc, va_list v_lst, int *count)
 	}
 }
 
-void			call_int(t_spec *spc, va_list v_lst, int *count)
+void			call_int(t_spc *spc, va_list v_lst, int *count)
 {
 	if (spc->type == 'D')
 	{
@@ -798,14 +793,14 @@ void			call_int(t_spec *spc, va_list v_lst, int *count)
 	: to_int(spc, v_lst, count);
 }
 
-void			call_pointer(t_spec *spc, va_list v_lst, int *count)
+void			call_pointer(t_spc *spc, va_list v_lst, int *count)
 {
 		spc->f[1]
 		? to_pointer_minus(spc, v_lst, count)
 		: to_pointer(spc, v_lst, count);
 }
 
-void			call_octal(t_spec *spc, va_list v_lst, int *count)
+void			call_octal(t_spc *spc, va_list v_lst, int *count)
 {
 	if (spc->type == 'O')
 	{
@@ -817,7 +812,7 @@ void			call_octal(t_spec *spc, va_list v_lst, int *count)
 	: to_octal(spc, v_lst, count);
 }
 
-void			call_uint(t_spec *spc, va_list v_lst, int *count)
+void			call_uint(t_spc *spc, va_list v_lst, int *count)
 {
 	if (spc->type == 'U')
 	{
@@ -829,7 +824,7 @@ void			call_uint(t_spec *spc, va_list v_lst, int *count)
 	: to_uint(spc, v_lst, count);
 }
 
-void			call_hex(t_spec *spc, va_list v_lst, int *count)
+void			call_hex(t_spc *spc, va_list v_lst, int *count)
 {
 	if (spc->type == 'X')
 	{
@@ -845,7 +840,7 @@ void			call_hex(t_spec *spc, va_list v_lst, int *count)
 	}
 }
 
-void			call_char(t_spec *spc, va_list v_lst, int *count)
+void			call_char(t_spc *spc, va_list v_lst, int *count)
 {
 	if (spc->type == 'C')
 		to_char_big(spc, v_lst, count, 1);
@@ -853,7 +848,7 @@ void			call_char(t_spec *spc, va_list v_lst, int *count)
 		to_char(spc, v_lst, count, 1);
 }
 
-void			for_print(t_spec *spc, va_list v_lst, int *count)
+void			for_print(t_spc *spc, va_list v_lst, int *count)
 {
 	if (spc->type == 'd' || spc->type == 'D' || spc->type == 'i')
 		call_int(spc, v_lst, count);
@@ -873,13 +868,13 @@ void			for_print(t_spec *spc, va_list v_lst, int *count)
 		to_percent(spc, v_lst, count);
 }
 
-void			init_struct(t_var **tmp, t_spec **spec)
+void			init_struct(t_tmp **tmp, t_spc **spec)
 {
 	tmp_struct_init(tmp);
 	struct_init(spec);
 }
 
-void			free_struct(t_spec **spec, t_var **tmp)
+void			free_struct(t_spc **spec, t_tmp **tmp)
 {
 	free(*spec);
 	free(*tmp);
@@ -888,8 +883,8 @@ void			free_struct(t_spec **spec, t_var **tmp)
 int				ft_magic(const char *str, va_list v_lst, int *count)
 {
 	int		i;
-	t_var	*tmp;
-	t_spec 	*spec;
+	t_tmp	*tmp;
+	t_spc 	*spec;
 
 	i = 1;
 	init_struct(&tmp, &spec);
