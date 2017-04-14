@@ -12,7 +12,7 @@
 
 #include "ft_printf.h"
 
-uintmax_t 		get_hex(int len, va_list v_lst)
+uintmax_t		get_hex(int len, va_list v_lst)
 {
 	if (len == 1)
 		return (unsigned char)(va_arg(v_lst, unsigned int));
@@ -33,12 +33,13 @@ uintmax_t 		get_hex(int len, va_list v_lst)
 void			to_hex(t_spc *a, va_list v_lst, int *count)
 {
 	uintmax_t	x;
-	char 		*s;
+	char		*s;
 
 	x = get_hex(a->ln, v_lst);
 	(a->f[3]) ? a->wd -= 2 : 0;
 	(x == 0 && a->prc == 0)
-	? (s = "") : (s = ft_itoa_base_u(x, w_base(a)));
+	? (s = "")
+	: (s = ft_itoa_base_u(x, w_base(a)));
 	if (a->wd < a->prc)
 		a->wd = 0;
 	if (a->wd >= a->prc && a->prc > ft_countnum(x))
@@ -54,22 +55,22 @@ void			to_hex(t_spc *a, va_list v_lst, int *count)
 		ft_putchar('0');
 	while (a->prc-- > 0 && ++(*count))
 		ft_putchar('0');
-	x = 0;
-	while (s[x] && ++(*count))
-		ft_putchar((char)ft_tolower((s[x++])));
+	while (s[a->x] && ++(*count))
+		ft_putchar((char)ft_tolower((s[a->x++])));
 }
 
 void			to_hex_minus(t_spc *a, va_list v_lst, int *count)
 {
 	uintmax_t	x;
-	char 		*s;
+	char		*s;
 
 	x = get_hex(a->ln, v_lst);
 	(a->f[3]) ? a->wd -= 2 : 0;
 	if (a->wd < a->prc)
 		a->wd = 0;
 	(x == 0 && a->prc == 0)
-	? (s = "") : (s = ft_itoa_base_u(x, w_base(a)));
+	? (s = "")
+	: (s = ft_itoa_base_u(x, w_base(a)));
 	if (a->wd >= a->prc && a->prc > ft_countnum(x))
 		a->wd -= a->prc;
 	else
@@ -77,11 +78,10 @@ void			to_hex_minus(t_spc *a, va_list v_lst, int *count)
 	((a->f[3]) && (x > 0) && (*count += 2)) ? (ft_putstr("0x")) : 0;
 	(((size_t)a->prc > ft_strlen(s)) && (a->prc != -1))
 	? (a->prc -= ft_strlen(s)) : (a->prc = 0);
-	x = 0;
 	while (a->prc-- > 0 && ++(*count))
 		ft_putchar('0');
-	while (s[x] && ++(*count))
-		ft_putchar((char)ft_tolower(s[x++]));
+	while (s[a->x] && ++(*count))
+		ft_putchar((char)ft_tolower(s[a->x++]));
 	while (a->wd-- > 0 && ++(*count))
 		ft_putchar(' ');
 }
@@ -89,10 +89,11 @@ void			to_hex_minus(t_spc *a, va_list v_lst, int *count)
 void			to_hex_big(t_spc *a, va_list v_lst, int *count)
 {
 	uintmax_t	x;
-	char 		*s;
+	char		*s;
 
 	x = get_hex(a->ln, v_lst);
-	(x == 0 && a->prc == 0) ? (s = "") : (s = ft_itoa_base_u(x, w_base(a)));
+	(x == 0 && a->prc == 0) ? (s = "")
+	: (s = ft_itoa_base_u(x, w_base(a)));
 	(a->f[3]) ? a->wd -= 2 : 0;
 	(a->wd < a->prc) ? a->wd = 0 : 0;
 	if (a->wd >= a->prc && a->prc > ft_countnum(x))
@@ -110,22 +111,22 @@ void			to_hex_big(t_spc *a, va_list v_lst, int *count)
 		ft_putchar('0');
 	while (a->prc-- > 0 && ++(*count))
 		ft_putchar('0');
-	x = 0;
-	while (s[x] && ++(*count))
-		ft_putchar(s[x++]);
+	while (s[a->x] && ++(*count))
+		ft_putchar(s[a->x++]);
 }
 
 void			to_hex_big_minus(t_spc *a, va_list v_lst, int *count)
 {
 	uintmax_t	x;
-	char 		*s;
+	char		*s;
 
 	x = get_hex(a->ln, v_lst);
 	(a->f[3]) ? a->wd -= 2 : 0;
 	if (a->wd < a->prc)
 		a->wd = 0;
 	(x == 0 && a->prc == 0)
-	? (s = "") : (s = ft_itoa_base_u(x, w_base(a)));
+	? (s = "")
+	: (s = ft_itoa_base_u(x, w_base(a)));
 	if (a->wd >= a->prc && a->prc > ft_countnum(x))
 		a->wd -= a->prc;
 	else
@@ -133,11 +134,10 @@ void			to_hex_big_minus(t_spc *a, va_list v_lst, int *count)
 	((a->f[3]) && (x > 0) && (*count += 2)) ? (ft_putstr("0X")) : 0;
 	(((size_t)a->prc > ft_strlen(s)) && (a->prc != -1))
 	? (a->prc -= ft_strlen(s)) : (a->prc = 0);
-	x = 0;
 	while (a->prc-- > 0 && ++(*count))
 		ft_putchar('0');
-	while (s[x] && ++(*count))
-		ft_putchar(s[x++]);
+	while (s[a->x] && ++(*count))
+		ft_putchar(s[a->x++]);
 	while (!a->f[0] && a->wd-- > 0 && ++(*count))
 		ft_putchar(' ');
 	while (a->f[0] && !a->f[1] && a->wd-- > 0 && ++(*count))

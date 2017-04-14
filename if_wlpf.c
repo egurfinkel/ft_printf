@@ -12,14 +12,14 @@
 
 #include "ft_printf.h"
 
-int 			if_width(const char *s)
+int				if_width(const char *s)
 {
 	if (*s != '0' && ft_isdigit(*s))
 		return (1);
 	return (0);
 }
 
-int 			if_length(const char *s)
+int				if_length(const char *s)
 {
 	if (ft_strncmp("hh", s, 2) == 0)
 		return (1);
@@ -36,14 +36,14 @@ int 			if_length(const char *s)
 	return (0);
 }
 
-int 			if_precision(const char *s)
+int				if_precision(const char *s)
 {
 	if (*s == '.')
 		return (1);
 	return (0);
 }
 
-int 			if_flag(const char ch)
+int				if_flag(const char ch)
 {
 	if (ch == '+' || ch == '-' || ch == '0' || ch == ' ' || ch == '#')
 		return (1);

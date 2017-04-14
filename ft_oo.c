@@ -45,14 +45,14 @@ void			call_octal(t_spc *spc, va_list v_lst, int *count)
 void			to_octal(t_spc *a, va_list v_lst, int *count)
 {
 	uintmax_t	o;
-	char 		*s;
+	char		*s;
 
 	o = get_octal(a->ln, v_lst);
 	(o > 0 && a->f[3] && a->prc--) ? (a->wd--) : 0;
 	if (a->wd < a->prc)
 		a->wd = 0;
-	(o == 0 && a->prc == 0)
-	? s = "" : (s = ft_itoa_base_u(o, w_base(a)));
+	(s = ft_itoa_base_u(o, w_base(a)));
+	(o == 0 && a->prc == 0) ? s = "" : 0;
 	(o == 0 && a->f[3]) ? s = "0" : 0;
 	if (a->wd >= a->prc && a->prc > ft_countnum(o))
 		a->wd -= a->prc;
@@ -67,21 +67,21 @@ void			to_octal(t_spc *a, va_list v_lst, int *count)
 	while (a->prc-- > 0 && ++(*count))
 		ft_putchar('0');
 	(o > 0 && a->f[3] && ++(*count)) ? ft_putchar('0') : 0;
-	o = 0;
-	while (s[o] && ++(*count))
-		ft_putchar(s[o++]);
+	while (s[a->x] && ++(*count))
+		ft_putchar(s[a->x++]);
 }
 
 void			to_octal_minus(t_spc *a, va_list v_lst, int *count)
 {
 	uintmax_t	o;
-	char 		*s;
+	char		*s;
 
 	o = get_octal(a->ln, v_lst);
 	if (a->wd < a->prc)
 		a->wd = 0;
 	(o == 0 && a->prc == 0)
-	? (s = "") : (s = ft_itoa_base_u(o, w_base(a)));
+	? (s = "")
+	: (s = ft_itoa_base_u(o, w_base(a)));
 	(o == 0 && a->f[3] && ++(*count)) ? s = "0" : 0;
 	(a->f[3]) ? a->wd-- : 0;
 	if (a->wd >= a->prc && a->prc > ft_countnum(o))
@@ -99,4 +99,3 @@ void			to_octal_minus(t_spc *a, va_list v_lst, int *count)
 	while (a->wd-- > 0 && ++(*count))
 		ft_putchar(' ');
 }
-

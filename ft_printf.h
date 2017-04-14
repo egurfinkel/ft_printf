@@ -28,10 +28,12 @@ typedef struct		s_spec
 	int				wd;
 	int				ln;
 	char			type;
+	int				i;
 	int				h;
 	int				l;
 	int				wand;
 	int				neg;
+	int				x;
 }					t_spc;
 
 typedef struct		s_temp

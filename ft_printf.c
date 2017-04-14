@@ -33,10 +33,12 @@ void			struct_init(t_spc **str)
 	(*str)->f[4] = 0;
 	(*str)->ln = -1;
 	(*str)->type = '\0';
+	(*str)->i = 1;
 	(*str)->h = 0;
 	(*str)->l = 0;
 	(*str)->wand = 0;
 	(*str)->neg = 0;
+	(*str)->x = 0;
 }
 
 void			for_print(t_spc *spc, va_list v_lst, int *count)
@@ -61,31 +63,30 @@ void			for_print(t_spc *spc, va_list v_lst, int *count)
 
 int				ft_magic(const char *str, va_list v_lst, int *count)
 {
-	int		i;
-	t_tmp	*tmp;
-	t_spc 	*spec;
+	t_tmp		*tmp;
+	t_spc		*spec;
 
-	i = 1;
 	init_struct(&tmp, &spec);
-	while (str[i] && ((tmp->f = if_flag(str[i])) ||
-			(tmp->w = if_width(str + i)) || (tmp->l = if_length(str + i)) ||
-			(tmp->p = if_precision(str + i))))
+	while (str[spec->i] && ((tmp->f = if_flag(str[spec->i])) ||
+			(tmp->w = if_width(str + spec->i)) ||
+			(tmp->l = if_length(str + spec->i)) ||
+			(tmp->p = if_precision(str + spec->i))))
 	{
 		if (tmp->f == 1)
-			i += find_flag(str + i, spec);
+			spec->i += find_flag(str + spec->i, spec);
 		else if (tmp->w == 1)
-			i += find_width(str + i, spec);
+			spec->i += find_width(str + spec->i, spec);
 		else if (tmp->l == 1)
-			i += find_length(str + i, spec);
+			spec->i += find_length(str + spec->i, spec);
 		else if (tmp->p == 1)
-			i += find_precision(str + i, spec);
+			spec->i += find_precision(str + spec->i, spec);
 	}
-	spec->type = str[i++];
+	spec->type = str[spec->i++];
 	if (spec->type == '\0')
-		return (i - 1);
+		return (spec->i - 1);
 	for_print(spec, v_lst, count);
 	free_struct(&spec, &tmp);
-	return (i);
+	return (spec->i);
 }
 
 int				ft_printf(const char *str, ...)

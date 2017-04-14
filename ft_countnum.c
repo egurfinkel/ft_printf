@@ -12,9 +12,9 @@
 
 #include "ft_printf.h"
 
-int 			ft_countnum(intmax_t n)
+int			ft_countnum(intmax_t n)
 {
-	int len;
+	int		len;
 
 	len = 0;
 	while (n > 0)

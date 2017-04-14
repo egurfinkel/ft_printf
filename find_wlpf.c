@@ -12,7 +12,7 @@
 
 #include "ft_printf.h"
 
-int 			find_flag(const char *s, t_spc *a)
+int				find_flag(const char *s, t_spc *a)
 {
 	if (*s == '0')
 		a->f[0] = 1;
@@ -35,7 +35,7 @@ int				find_width(const char *s, t_spc *a)
 
 int				find_precision(const char *s, t_spc *a)
 {
-	int 		prec;
+	int			prec;
 
 	prec = 1;
 	s++;
@@ -69,7 +69,7 @@ void			find_ln_magic(const char *s, t_spc *a)
 
 int				find_length(const char *s, t_spc *a)
 {
-	int 		i;
+	int			i;
 
 	i = 0;
 	if (a->h == 0 && a->l == 0)

@@ -12,14 +12,14 @@
 
 #include "ft_printf.h"
 
-unsigned int 	w_base(t_spc *a)
+unsigned int	w_base(t_spc *a)
 {
 	if (a->type == 'o' || a->type == 'O')
 		return (8);
 	if (a->type == 'x' || a->type == 'X' || a->type == 'p')
 		return (16);
 	else
-		return(10);
+		return (10);
 }
 
 void			call_uint(t_spc *spc, va_list v_lst, int *count)
@@ -56,12 +56,15 @@ void			to_uint(t_spc *a, va_list v_lst, int *count)
 {
 	uintmax_t		ui;
 	char			*s;
-	char 			symb;
+	char			symb;
 
 	ui = get_uint(a->ln, v_lst);
 	(ui == 0 && a->prc == 0)
-	? (s = "") : (s = ft_itoa_base_u(ui, w_base(a)));
-	(a->f[0]) ? (symb = '0') : (symb = ' ');
+	? (s = "")
+	: (s = ft_itoa_base_u(ui, w_base(a)));
+	(a->f[0])
+	? (symb = '0')
+	: (symb = ' ');
 	if (a->wd < a->prc)
 		a->wd = 0;
 	if (a->wd >= a->prc && a->prc > ft_countnum(ui))
@@ -74,9 +77,8 @@ void			to_uint(t_spc *a, va_list v_lst, int *count)
 		ft_putchar(symb);
 	while (a->prc-- > 0 && ++(*count))
 		ft_putchar('0');
-	ui = 0;
-	while (s[ui] && ++(*count))
-		ft_putchar(s[ui++]);
+	while (s[a->x] && ++(*count))
+		ft_putchar(s[a->x++]);
 }
 
 void			to_uint_minus(t_spc *a, va_list v_lst, int *count)
@@ -88,7 +90,8 @@ void			to_uint_minus(t_spc *a, va_list v_lst, int *count)
 	if (a->wd < a->prc)
 		a->wd = 0;
 	(ui == 0 && a->prc == 0)
-	? (s = "") : (s = ft_itoa_base_u(ui, w_base(a)));
+	? (s = "")
+	: (s = ft_itoa_base_u(ui, w_base(a)));
 	if (a->wd >= a->prc && a->prc > ft_countnum(ui))
 		a->wd -= a->prc;
 	else
