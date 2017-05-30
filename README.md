@@ -28,8 +28,10 @@ manner (Segmentation fault, bus error, double free, etc).
 linked to our testing main to give you your results.
 - You’ll have to submit a file called author containing your username followed by a
 ’\n’ at the root of your repository.
-```$>cat -e author```
-```xlogin$```
+```
+$>cat -e author
+xlogin$
+```
 - You are allowed to use the following functions:
 - write
 - malloc
@@ -56,4 +58,6 @@ course add your own bonuses, which will then be evaluated directly by your corre
 - Non-existing flags management: %b to print in binary, %r to print a string of nonprintable
 characters, %k to print a date in any ordinary ISO format etc.
 - Management of alter tools for colors, fd or other fun stuff like that :)
-```printf("Le fichier{cyan}%s{eoc} contient : {red}%s{eoc}", filename, str);```
+```
+printf("Le fichier{cyan}%s{eoc} contient : {red}%s{eoc}", filename, str);
+```
